@@ -22,6 +22,28 @@ app.use('/images', (req, res, next) => {
   });
 });
 
+// MongoDB setup
+const { MongoClient } = require('mongodb');
+const mongoUri = 'mongodb+srv://abusadeeq365_db_user:JOd7fok2wdItnIcs@cluster0.of6vrhu.mongodb.net/'; // Use your actual connection string
+const dbName = 'marketplace';
+const collectionName = 'lessons';
+
+// GET /lessons endpoint
+app.get('/lessons', async (req, res) => {
+  let client;
+  try {
+    client = new MongoClient(mongoUri, { useUnifiedTopology: true });
+    await client.connect();
+    const db = client.db(dbName);
+    const lessons = await db.collection(collectionName).find({}).toArray();
+    res.json(lessons);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch lessons' });
+  } finally {
+    if (client) await client.close();
+  }
+});
+
 // Placeholder for other routes and middleware
 
 const PORT = process.env.PORT || 3000;
