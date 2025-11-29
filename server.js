@@ -44,6 +44,26 @@ app.get('/lessons', async (req, res) => {
   }
 });
 
+app.use(express.json());
+
+// POST /orders endpoint
+app.post('/orders', async (req, res) => {
+  let client;
+  try {
+    client = new MongoClient(mongoUri, { useUnifiedTopology: true });
+    await client.connect();
+    const db = client.db(dbName);
+    const order = req.body;
+    // Optionally add validation here
+    const result = await db.collection('orders').insertOne(order);
+    res.status(201).json({ message: 'Order saved', orderId: result.insertedId });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to save order' });
+  } finally {
+    if (client) await client.close();
+  }
+});
+
 // Placeholder for other routes and middleware
 
 const PORT = process.env.PORT || 3000;
