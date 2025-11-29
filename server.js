@@ -64,6 +64,31 @@ app.post('/orders', async (req, res) => {
   }
 });
 
+// PUT /lessons/:id endpoint to update lesson spaces
+app.put('/lessons/:id', async (req, res) => {
+  let client;
+  try {
+    client = new MongoClient(mongoUri, { useUnifiedTopology: true });
+    await client.connect();
+    const db = client.db(dbName);
+    const lessonId = parseInt(req.params.id, 10);
+    const { spaces } = req.body;
+    const result = await db.collection(collectionName).updateOne(
+      { id: lessonId },
+      { $set: { spaces } }
+    );
+    if (result.modifiedCount === 1) {
+      res.json({ message: 'Lesson spaces updated' });
+    } else {
+      res.status(404).json({ error: 'Lesson not found or not updated' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update lesson spaces' });
+  } finally {
+    if (client) await client.close();
+  }
+});
+
 // Placeholder for other routes and middleware
 
 const PORT = process.env.PORT || 3000;
