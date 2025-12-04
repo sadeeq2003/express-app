@@ -1,10 +1,6 @@
-// Script to inject lessons into MongoDB Atlas using native Node.js driver
-// Usage: node injectLessons.js
-
 const { MongoClient } = require('mongodb');
-
-const uri = 'mongodb+srv://abusadeeq365_db_user:JOd7fok2wdItnIcs@cluster0.of6vrhu.mongodb.net/'; // <-- Replace with your MongoDB Atlas connection string
-const dbName = 'marketplace'; // <-- Replace with your database name
+const uri = 'mongodb+srv://abusadeeq365_db_user:JOd7fok2wdItnIcs@cluster0.of6vrhu.mongodb.net/';
+const dbName = 'marketplace';
 const collectionName = 'lessons';
 
 const lessons = [
@@ -26,7 +22,7 @@ async function injectLessons() {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
-    await collection.deleteMany({}); // Optional: clear existing lessons
+    await collection.deleteMany({});
     const result = await collection.insertMany(lessons);
     console.log(`Inserted ${result.insertedCount} lessons.`);
   } catch (err) {
